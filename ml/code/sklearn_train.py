@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 import time
 import pickle
-from config import features_path, clf_name, clf, status_vali
+from sklearn_config import features_path, clf_name, clf, status_vali
 
 t_start = time.time()
 
