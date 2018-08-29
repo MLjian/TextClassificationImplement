@@ -1,45 +1,31 @@
 # -*- coding: utf-8 -*-
 """
-@brief : 将原始数据数字化为lsa特征，并将结果保存至本地
+@brief : 将tfidf特征降维为lsa特征，并将结果保存至本地
 @author: Jian
 """
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 import pickle
 import time
 
 t_start = time.time()
 
-"""=====================================================================================================================
-1 数据预处理
-"""
-df_train = pd.read_csv('../data/train_set.csv')
-df_train.drop(columns='article', inplace=True)
-df_test = pd.read_csv('../data/test_set.csv')
-df_test.drop(columns='article', inplace=True)
-y_train = (df_train['class'] - 1).values
+"""读取tfidf特征"""
+tfidf_path = './data_tfidf_selected_lsvc_l2_143w.pkl'
+f_tfidf = open(tfidf_path, 'rb')
+x_train, y_train, x_test = pickle.load(f_tfidf)
+f_tfidf.close()
 
-"""=====================================================================================================================
-2 特征工程
-"""
-print("tfidf......")
-vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df=3, max_df=0.9, max_features=100000)
-corpus_count = vectorizer.fit_transform(pd.concat(objs=[df_train, df_test], axis=0, sort=True)['word_seg'])
-
+"""特征降维：lsa"""
 print("lsa......")
 lsa = TruncatedSVD(n_components=200)
-corpus_vectors = lsa.fit_transform(corpus_count)
-x_train = corpus_vectors[:len(y_train)]
-x_test = corpus_vectors[len(y_train):]
+x_train = lsa.fit_transform(x_train)
+x_test = lsa.transform(x_test)
 
-"""=====================================================================================================================
-3 保存至本地
-"""
+"""将lsa特征保存至本地"""
 data = (x_train, y_train, x_test)
-fp = open('./data_lsa.pkl', 'wb')
-pickle.dump(data, fp)
-fp.close()
+f_data = open('./data_s_lsvc_l2_143w_lsa.pkl', 'wb')
+pickle.dump(data, f_data)
+f_data.close()
 
 t_end = time.time()
-print("已将原始数据数字化为lsa特征，共耗时：{}min".format((t_end-t_start)/60))
+print("lsa特征完成，共耗时：{}min".format((t_end-t_start)/60))

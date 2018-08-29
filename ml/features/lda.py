@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-@brief : 将原始数据数字化为lda特征，并将结果保存至本地
+@brief : 将tf特征降维为lda特征，并将结果保存至本地
 @author: Jian
 """
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import pickle
 import time
@@ -12,34 +10,28 @@ import time
 t_start = time.time()
 
 """=====================================================================================================================
-1 数据预处理
+1 tf特征加载
 """
-df_train = pd.read_csv('../data/train_set.csv')
-df_train.drop(columns='article', inplace=True)
-df_test = pd.read_csv('../data/test_set.csv')
-df_test.drop(columns='article', inplace=True)
-y_train = (df_train['class'] - 1).values
+tf_path = './tf_select_LSVC_l2644235.pkl'
+f_tf = open(tf_path, 'rb')
+x_train, y_train, x_test = pickle.load(f_tf)
+f_tf.close()
 
 """=====================================================================================================================
-2 特征工程
+2 特征降维：lda
 """
-print("tfidf......")
-vectorizer = TfidfVectorizer(ngram_range=(1, 2), min_df=3, max_df=0.9, max_features=10000)
-corpus_count = vectorizer.fit_transform(pd.concat(objs=[df_train, df_test], axis=0, sort=True)['word_seg'])
-
 print("lda......")
 lda = LatentDirichletAllocation(n_components=200)
-corpus_vectors = lda.fit_transform(corpus_count)
-x_train = corpus_vectors[:len(y_train)]
-x_test = corpus_vectors[len(y_train):]
+x_train = lda.fit_transform(x_train)
+x_test = lda.transform(x_test)
 
 """=====================================================================================================================
-3 保存至本地
+3 将lda特征保存至本地
 """
 data = (x_train, y_train, x_test)
-fp = open('./data_lda.pkl', 'wb')
-pickle.dump(data, fp)
-fp.close()
+f_data = open('./data_lda.pkl', 'wb')
+pickle.dump(data, f_data)
+f_data.close()
 
 t_end = time.time()
-print("已将原始数据数字化为lda特征，共耗时：{}min".format((t_end-t_start)/60))
+print("lda特征完成，共耗时：{}min".format((t_end-t_start)/60))

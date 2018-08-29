@@ -22,7 +22,7 @@ def sentence2list(sentence):
 
 
 """=====================================================================================================================
-1 数据预处理
+1 读取原始数据，并进行简单处理
 """
 df_train = pd.read_csv('../data/train_set.csv')
 df_train.drop(columns='article', inplace=True)
@@ -38,7 +38,7 @@ texts = df_all['word_list'].tolist()
 2 doc2vec
 """
 documents = [TaggedDocument(doc, [i]) for i, doc in enumerate(texts)]
-model = Doc2Vec(documents, vector_size=200, window=10, min_count=3, workers=4, epochs=10)
+model = Doc2Vec(documents, vector_size=200, window=5, min_count=3, workers=4, epochs=25)
 docvecs = model.docvecs
 
 x_train = []
@@ -52,12 +52,12 @@ for j in range(102277, 204554):
 x_test = np.array(x_test)
 
 """=====================================================================================================================
-3 保存至本地
+3 将doc2vec特征保存至本地
 """
 data = (x_train, y_train, x_test)
-fp = open('./data_doc2vec.pkl', 'wb')
-pickle.dump(data, fp)
-fp.close()
+f_data = open('./data_doc2vec_25.pkl', 'wb')
+pickle.dump(data, f_data)
+f_data.close()
 
 t_end = time.time()
 print("已将原始数据数字化为doc2vec特征，共耗时：{}min".format((t_end-t_start)/60))
