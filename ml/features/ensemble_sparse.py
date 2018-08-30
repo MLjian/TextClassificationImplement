@@ -17,7 +17,7 @@ x_train_ens_s = sparse.csr_matrix(x_train_ens)
 x_test_ens_s = sparse.csc_matrix(x_test_ens)
 
 """读取tfidf特征"""
-f_tfidf = open('./data_tfidf.pkl', 'rb')
+f_tfidf = open('./data_tfidf_select_LSVC_l2_17107.pkl', 'rb')
 x_train_tfidf, _, x_test_tfidf = pickle.load(f_tfidf)
 f_tfidf.close()
 
