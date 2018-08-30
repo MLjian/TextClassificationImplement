@@ -33,7 +33,7 @@ df_ori = pd.read_csv(data_path)
 
 df_ori.drop(columns='article', inplace=True)
 if train:
-    df_ori['classify'] = df_ori['classify'] - 1
+    df_ori['class'] = df_ori['class'] - 1
 
 """加载word2index的dict"""
 f_word2index = open('../word2vec/word_seg_word_idx_dict.pkl', 'rb')
@@ -75,7 +75,7 @@ df_ori['word_seg'] = df_ori['word_seg'].apply(sentence2index)
 """
 if train:
     df_x = df_ori.loc[:, 'word_seg']
-    df_y = df_ori.loc[:, 'classify']
+    df_y = df_ori.loc[:, 'class']
     x_train, x_vali, y_train, y_vali = train_test_split(df_x, df_y, test_size=0.1, random_state=0)
     df_train = pd.concat((x_train, y_train), axis=1)
     df_vali = pd.concat((x_vali, y_vali), axis=1)

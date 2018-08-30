@@ -55,7 +55,7 @@ def sentence2index(sentence):
 # 3 删除'article'列；word2index，并截断或补零；
 #=======================================================================================================================
 if train:
-    df_ori.loc[:, 'classify'] = df_ori.loc[:, 'classify'] - 1
+    df_ori.loc[:, 'class'] = df_ori.loc[:, 'class'] - 1
 df_ori.loc[:, 'word_seg'] = df_ori.loc[:, 'word_seg'].apply(sentence2index)
 
 #=======================================================================================================================
@@ -63,7 +63,7 @@ df_ori.loc[:, 'word_seg'] = df_ori.loc[:, 'word_seg'].apply(sentence2index)
 #=======================================================================================================================
 x = np.array(list(df_ori.loc[:, 'word_seg']))
 if train:
-    y = df_ori.loc[:, 'classify'].values
+    y = df_ori.loc[:, 'class'].values
     x_train, x_vali, y_train, y_vali = train_test_split(x, y, test_size=0.07, random_state=0)
     mat_train = np.concatenate((x_train, y_train[:, np.newaxis]), axis=1)
     mat_vali = np.concatenate((x_vali, y_vali[:, np.newaxis]), axis=1)
