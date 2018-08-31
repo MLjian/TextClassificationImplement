@@ -72,7 +72,7 @@ def eval(model, data_vali, gap_size, use_gpu):
 #=======================================================================================================================
 if __name__ == '__main__':
     print("开始训练......................")
-    vis = visdom.Visdom(env=opt.vis_name)
+    #vis = visdom.Visdom(env=opt.vis_name)
     losses = []
     j = 0
     for epoch in range(opt.num_epochs):
@@ -107,12 +107,13 @@ if __name__ == '__main__':
                 loss_mean = torch.Tensor(losses).mean().item()
                 losses = []
                 print("loss:{}".format(loss_mean))
-                vis.line(X=torch.tensor([j]), Y=torch.tensor([loss_mean]), win='loss',
-                        update='append' if j != opt.print_fre else None, opts=dict(xlabel='step', ylabel='loss'))
+                #vis.line(X=torch.tensor([j]), Y=torch.tensor([loss_mean]), win='loss',
+                        #update='append' if j != opt.print_fre else None, opts=dict(xlabel='step', ylabel='loss'))
         """评估验证集的准确率"""
         acc_vali = eval(model, mat_vali, opt.batch_size, opt.use_gpu)
         time_end = time.time()
         print("第 {} epoch, 验证集的准确率：{}, 耗时：{}s".format((epoch+1), acc_vali, (time_end - time_start)))
+        """
         vis.line(X=torch.tensor([epoch + 1]), Y=torch.tensor([acc_vali]), win='acc_vali',
                  update='append' if epoch != 1 else None, opts=dict(xlabel='epoch', ylabel='vali_accuracy'))
         vis.text(
@@ -120,10 +121,10 @@ if __name__ == '__main__':
                      'num_layers = {}；lr = {}；weight_decay = {}；data_shuffle = {}；batch_size = {}'.format(
                     opt.model_name,opt.emb_freeze, opt.input_size, opt.hidden_size, opt.l1_size, opt.l2_size,
                     opt.num_layers, opt.lr, opt.weight_decay, opt.data_shuffle, opt.batch_size), win='paras')
-
+        """
         """每epoch,保存已经训练的模型"""
         TrainedModel_path = './trained_models/%d' % (epoch + 1) + '_' + '%f' % acc_vali + '.pkl'
         torch.save(model, TrainedModel_path)
-        vis.save([opt.vis_name])
+        #vis.save([opt.vis_name])
 
 
