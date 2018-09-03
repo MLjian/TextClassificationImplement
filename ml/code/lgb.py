@@ -41,7 +41,7 @@ d_vali = lgb.Dataset(data=x_vali, label=y_vali)
 """
 params = {
         'boosting': 'gbdt',
-        'application': 'multiclassova',
+        'application': 'multiclass',
         'num_class': 20,
         'learning_rate': 0.1,
         'num_leaves':31,
